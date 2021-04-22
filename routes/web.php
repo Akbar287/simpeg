@@ -29,6 +29,8 @@ Route::middleware(['auth'])->group(function ($route) {
         $route->prefix('pribadi')->name('Pegawai')->group(function($route) {
             $route->get('/', 'PersonalController@index');
             $route->get('/ttd', 'PersonalController@ttd');
+            $route->get('/photo', 'PersonalController@photo');
+            $route->post('/photo', 'PersonalController@setPhoto');
         });
 
         $route->prefix('izinmutasi')->name('Mutasi')->group(function($route) {

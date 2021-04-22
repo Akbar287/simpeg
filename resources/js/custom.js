@@ -1365,6 +1365,21 @@ if(document.location.pathname.split('/')[1] == 'izinmutasi' || document.location
     }
 }
 if(document.location.pathname.split('/')[1] == 'pribadi') {
+    let defaultImageProfile = '', reader
+    var output = document.getElementById('img-profile-photo');
+    $('#image-profile').on('input', function(event) {
+        defaultImageProfile = output.src
+        reader = new FileReader();
+        reader.onload = function(){
+          output.src = reader.result;
+        };
+        reader.readAsDataURL(event.target.files[0]);
+        $('.btn-reload-profile').slideToggle(200)
+    });
+    $('.btn-reload-profile').on('click', function() {
+        $('.btn-reload-profile').slideToggle(200)
+        output.src = defaultImageProfile
+    })
     $("#btn-change-pw").fireModal({
         title: 'Ganti Password',
         body: $("#modal-change-password"),

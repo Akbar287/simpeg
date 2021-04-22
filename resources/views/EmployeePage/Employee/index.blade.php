@@ -86,6 +86,7 @@
                                     </table>
                                     <div class="my-3">
                                         @if($employee->user_id == Auth::user()->user_id) <button class="btn btn-info" id="btn-change-pw">Ganti Password</button> @endif
+                                        @if($employee->user_id == Auth::user()->user_id) <a class="btn btn-primary" href="{{ url('pribadi/photo') }}">Ubah Foto</a> @endif
                                     </div>
                                 </div>
                             </div>

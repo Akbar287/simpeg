@@ -65,9 +65,11 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
         ],
 
-        'attendance' => [
+        'profile' => [
             'driver' => 'local',
-            'root' => public_path() . '/uploads/attendance'
+            'root'   => public_path() . '/images/profile',
+            'url' => env('APP_URL').'/images',
+            'visibility' => 'public',
         ]
 
     ],
