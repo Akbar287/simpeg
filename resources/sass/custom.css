@@ -1,0 +1,44 @@
+
+.fc-event {
+    margin: 1em 0;
+    cursor: move;
+    background-color: #1E94C4;
+    color: white;
+    padding: 20px;
+}
+
+.jadwal-kerja-href {
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.822);
+    font-weight: 600;
+}
+
+.jadwal-kerja-href:hover {
+    text-decoration: none;
+    color: rgba(0, 0, 0, 0.829);
+    text-shadow: 2px gray;
+}
+.active-schedule {
+    font-weight: 800;
+}
+.list-employee-schedule {
+    max-height: 550px!important;
+}
+.menu-a {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}
+
+.menu-a:hover {
+    text-decoration: none;
+    color: black;
+}
+.card-menu {
+    border: none;
+    transition: all 0.2s ease;
+}
+.card-menu:hover {
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.2), 0 1px 15px 0 rgba(0, 0, 0, 0.19) !important;
+    transform: scale(1.01);
+}
