@@ -14,11 +14,6 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <img width="300" class="img-responsive img-thumbnail" src="{{  asset('../images/profile/employee/'.$employee->profile_photo) }}" alt="Foto Profil" />
-                                <div class="m-2 text-center">
-                                    <button class="btn btn-primary btn-show-sig">Tampilkan TTD</button>
-                                    <div class="kbw-signature" style="width: 300px;margin: 20px 0; height: 240px;border: 1px solid rgba(59, 53, 53, 0.233);display:none;"></div>
-                                    <p style="display: none;" class="text-muted"></p>
-                                </div>
                             </div>
                             <div class="col-md-9">
                                 <div class="ml-5">

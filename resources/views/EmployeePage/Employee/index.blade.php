@@ -14,22 +14,6 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <img width="300" class="img-responsive img-thumbnail" src="{{  asset('../images/profile/employee/'.$employee->profile_photo) }}" alt="Foto Profil" />
-                                <div class="m-2 text-center">
-                                    @if($employee->signature()->first())
-                                    <button class="btn btn-primary btn-show-sig">Tampilkan TTD</button>
-                                    <div class="kbw-signature" style="width: 300px;margin: 20px 0; height: 240px;border: 1px solid rgba(59, 53, 53, 0.233);display:none;" ></div>
-                                    @else
-                                    <a class="btn btn-primary" href="{{ url('pribadi/ttd') }}">Daftarkan TTD</a>
-                                    @endif
-                                    @if($employee->user_id == Auth::user()->user_id) <div class="row btn-sig">
-                                        <div class="col-12 text-center">
-                                            <button class="btn btn-primary" id="clear" style="display:none;">Hapus</button>
-                                            <button class="btn btn-primary btn-save-signature" data-id="{{ Auth::user()->user_id }}" style="display:none;">Simpan TTD</button>
-                                        </div>
-                                    </div>
-                                    @endif
-                                    <p style="display: none;" class="text-muted"></p>
-                                </div>
                             </div>
                             <div class="col-md-9">
                                 <div class="ml-5">
@@ -87,6 +71,7 @@
                                     <div class="my-3">
                                         @if($employee->user_id == Auth::user()->user_id) <button class="btn btn-info" id="btn-change-pw">Ganti Password</button> @endif
                                         @if($employee->user_id == Auth::user()->user_id) <a class="btn btn-primary" href="{{ url('pribadi/photo') }}">Ubah Foto</a> @endif
+                                        @if($employee->user_id == Auth::user()->user_id) <a class="btn btn-success" href="{{ url('pribadi/ttd') }}">Ubah TTD Digital</a> @endif
                                     </div>
                                 </div>
                             </div>

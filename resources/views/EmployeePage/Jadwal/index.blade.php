@@ -17,14 +17,12 @@
                         <thead>
                             <th>Tanggal</th>
                             <th>Jenis Kerja</th>
-                            <th>Status</th>
                         </thead>
                         <tbody>
                             @foreach($schedules as $schedule)
                             <tr {{ ($schedule->hari_kerja == date('Y-m-d') ? 'style="background: rgba(74, 168, 231, 0.219)"' : '') }}>
                                 <td>{{ Helper::time($schedule->hari_kerja) }}</td>
                                 <td>{{ $schedule->jenis_kerja }}</td>
-                                <td>{{ $schedule->hari_kerja }}</td>
                             </tr>
                             @endforeach
                         </tbody>

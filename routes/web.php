@@ -96,6 +96,9 @@ Route::middleware(['auth'])->group(function ($route) {
         $route->name('Admin')->prefix('admin')->group(function($route) {
             $route->get('/', 'AdminController@index');
             $route->get('/create', 'AdminController@create');
+            $route->get('/photo', 'AdminController@photo');
+            $route->get('/ttd', 'AdminController@ttd');
+            $route->post('/photo', 'AdminController@setPhoto');
             $route->post('/', 'AdminController@store');
             $route->get('/{admin}', 'AdminController@show');
             $route->get('/{admin}/edit', 'AdminController@edit');
@@ -215,6 +218,8 @@ Route::middleware(['auth'])->group(function ($route) {
 
         $route->name('Jadwal')->prefix('jadwalkerja')->group(function($route) {
             $route->get('/', 'ScheduleController@index');
+            $route->get('/qr', 'ScheduleController@indexqr');
+            $route->get('/qr/{schedule}', 'ScheduleController@showqr');
         });
     });
 });

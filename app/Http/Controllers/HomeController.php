@@ -61,10 +61,7 @@ class HomeController extends Controller
     }
     public function getSignature(Request $request)
     {
-        $request->validate([
-            'employee' => ['required', 'numeric']
-        ]);
-        $sig = Signature::where('user_id', $request->employee)->first();
+        $sig = (isset($request->employee)) ? Signature::where('user_id', $request->employee)->first() : Signature::where('user_id', Auth::user()->user_id)->first();
         return response()->json(['sig' => (!is_null($sig)) ? $sig->signature : '', 'status' => (!is_null($sig))?'success':'error'], 200);
     }
     public function setSignature(Request $request)

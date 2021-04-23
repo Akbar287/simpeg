@@ -188,7 +188,7 @@ class FurloughController extends Controller
         $toDate = ($request->toDate) ? $request->toDate : date('Y') . '-' . date('m') . '-'. date('d');
         $statusID = ($request->status) ? $request->status : '9';$data = '';
         $data = ($statusID == 9) ? Furlough::select('users.nip')->addSelect('furloughs.furlough_id')->addSelect('users.name')->addSelect('furloughs.start_date')->addSelect('furloughs.finish_date')->addSelect('furloughs.status')->join('user_furloughs', 'furloughs.furlough_id', 'user_furloughs.furlough_id')->join('users', 'users.user_id', 'user_furloughs.user_id')->whereBetween('furloughs.created_at', [$fromDate, $toDate . ' 23:59:59'])->orderBy('furloughs.created_at', 'desc')->get() : Furlough::select('users.nip')->addSelect('furloughs.furlough_id')->addSelect('users.name')->addSelect('furloughs.start_date')->addSelect('furloughs.finish_date')->addSelect('furloughs.status')->join('user_furloughs', 'furloughs.furlough_id', 'user_furloughs.furlough_id')->join('users', 'users.user_id', 'user_furloughs.user_id')->whereBetween('furloughs.created_at', [$fromDate, $toDate . ' 23:59:59'])->orderBy('furloughs.created_at', 'desc')->where('furloughs.status', $statusID)->get();
-        return view('MasterData/Furlough/Furlough', compact('status', 'fromDate', 'toDate', 'statusID', 'data'));
+        return view('MasterData/Furlough/furlough', compact('status', 'fromDate', 'toDate', 'statusID', 'data'));
     }
     public function create_admin()
     {

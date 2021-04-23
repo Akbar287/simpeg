@@ -469,6 +469,21 @@ if(document.location.pathname.split('/')[1] == 'laporankerja') {
 }
 if(document.location.pathname.split('/')[1] == 'admin') {
     $(function() {
+        let defaultImageProfile = '', reader
+        var output = document.getElementById('img-profile-photo');
+        $('#image-profile').on('input', function(event) {
+            defaultImageProfile = output.src
+            reader = new FileReader();
+            reader.onload = function(){
+            output.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+            $('.btn-reload-profile').slideToggle(200)
+        });
+        $('.btn-reload-profile').on('click', function() {
+            $('.btn-reload-profile').slideToggle(200)
+            output.src = defaultImageProfile
+        })
         $('.table-data').dataTable({
             language: {
                 url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Indonesian.json'
@@ -539,77 +554,74 @@ if(document.location.pathname.split('/')[1] == 'admin') {
                 }
               })
         })
-        let sig = $('.kbw-signature').signature();
+        if(document.location.pathname.split('/').pop() == 'ttd') {
 
-        $('.btn-show-sig').on('click', function() {
-            $.ajax({
-                url : document.location.origin + '/api/signature/',
-                type: 'post',
-                data: {
-                    '_token': $('meta[name="csrf-token"]').attr('content'),
-                    'employee': parseInt(location.pathname.split('/').pop())
-                },
-                dataType: 'json',
-                success: function(data) {
-                    if(data.status == 'success') {
-                        sig.signature('draw', data.sig)
-                        $('.btn-show-sig').parent().children('div.kbw-signature').slideToggle('slow')
-                        $('.btn-show-sig').parent().children('div.btn-sig').children().children().slideToggle('slow')
-                    } else {
-                        $('.btn-show-sig').parent().children('p').text('Belum ada TTD').slideToggle('slow')
-                    }
-                }, error: function() {
-                }
-            })
-        })
+            let sig = $('.kbw-signature').signature();
 
-        $('.btn-save-signature').on('click', function() {
-            Swal.fire({
-                title: 'Ubah TTD ?',
-                text: "Tanda Tangan akan diubah!",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Ubah!',
-                cancelButtonText: 'Batalkan'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    $.ajax({
-                        url : document.location.origin + '/api/signature',
-                        type: 'post',
-                        data: {
-                            _method: 'put',
-                            _token: $('meta[name="csrf-token"]').attr('content'),
-                            sig: $('.kbw-signature').signature('toJSON'),
-                            sig_svg: sig.signature('toSVG'),
-                            user_id: $(this).data('id')
-                        },
-                        success: function() {
-                            Swal.fire(
-                                'Berhasil!',
-                                'Tanda Tangan berhasil diubah',
-                                'success'
-                            )
-                        }, error: function() {
-                            Swal.fire(
-                              'Gagal!',
-                              'Terjadi Kesalahan.. Cek Koneksi Internet',
-                              'error'
-                            )
+                $.ajax({
+                    url : document.location.origin + '/api/signature/',
+                    type: 'post',
+                    data: {
+                        '_token': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        if(data.status == 'success') {
+                            sig.signature('draw', data.sig)
+                        } else {
                         }
-                    });
-                }
+                    }, error: function() {
+                    }
+                })
+
+            $('.btn-save-signature').on('click', function() {
+                Swal.fire({
+                    title: 'Ubah TTD ?',
+                    text: "Tanda Tangan akan diubah!",
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Ubah!',
+                    cancelButtonText: 'Batalkan'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url : document.location.origin + '/api/signature',
+                            type: 'post',
+                            data: {
+                                _method: 'put',
+                                _token: $('meta[name="csrf-token"]').attr('content'),
+                                sig: $('.kbw-signature').signature('toJSON'),
+                                sig_svg: sig.signature('toSVG'),
+                                user_id: $(this).data('id')
+                            },
+                            success: function() {
+                                Swal.fire(
+                                    'Berhasil!',
+                                    'Tanda Tangan berhasil diubah',
+                                    'success'
+                                )
+                            }, error: function() {
+                                Swal.fire(
+                                  'Gagal!',
+                                  'Terjadi Kesalahan.. Cek Koneksi Internet',
+                                  'error'
+                                )
+                            }
+                        });
+                    }
+                })
+            });
+            $('#clear').on('click', function() {
+                sig.signature('clear');
             })
-        });
-        $('#clear').on('click', function() {
-            sig.signature('clear');
-        })
-        $('#finish_sig').on('click', function() {
-            var enable = $(this).text() === 'Enable';
-            $(this).text(enable ? 'Disable' : 'Enable')
-            sig.signature(enable ? 'enable' : 'disable')
-        })
+            $('#finish_sig').on('click', function() {
+                var enable = $(this).text() === 'Enable';
+                $(this).text(enable ? 'Disable' : 'Enable')
+                sig.signature(enable ? 'enable' : 'disable')
+            })
+        }
         $('.btn-reset-pw-employee').on('click', function() {
             Swal.fire({
                 title: 'Reset Password ?',
@@ -1429,8 +1441,6 @@ if(document.location.pathname.split('/')[1] == 'pribadi') {
         ]
     });
     let sig = $('.kbw-signature').signature();
-
-        $('.btn-show-sig').on('click', function() {
             $.ajax({
                 url : document.location.origin + '/api/signature/employee',
                 type: 'post',
@@ -1441,15 +1451,11 @@ if(document.location.pathname.split('/')[1] == 'pribadi') {
                 success: function(data) {
                     if(data.status == 'success') {
                         sig.signature('draw', data.sig)
-                        $('.btn-show-sig').parent().children('div.kbw-signature').slideToggle('slow')
-                        $('.btn-show-sig').parent().children('div.btn-sig').children().children().slideToggle('slow')
                     } else {
-                        $('.btn-show-sig').parent().children('p').text('Belum ada TTD').slideToggle('slow')
                     }
                 }, error: function() {
                 }
             })
-        })
 
         $('.btn-save-signature').on('click', function() {
             Swal.fire({

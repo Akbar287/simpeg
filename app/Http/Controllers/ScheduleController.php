@@ -140,9 +140,23 @@ class ScheduleController extends Controller
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $charactersLength = strlen($characters);
         $randomString = '';
-        for ($i = 0; $i < $length; $i++) {
-            $randomString .= $characters[rand(0, $charactersLength - 1)];
-        }
+        $cekDB = true;
+        do {
+            for ($i = 0; $i < $length; $i++) {
+                $randomString .= $characters[rand(0, $charactersLength - 1)];
+            }
+            $cekDB = (Schedule::where('random_string_barcode', $randomString)->count() == 0) ? false : true;
+        }while($cekDB);
         return $randomString;
+    }
+    public function indexqr(Request $request)
+    {
+        $employee = User::select('nip')->addSelect('user_id')->addSelect('name')->get();
+        $date = ($request->date) ? $request->date : date('Y-m-d');
+        $statusID = ($request->status) ? $request->status : 0;$data = '';
+
+        $data = ($statusID == 0) ? Schedule::where('hari_kerja', $date)->where('jenis_kerja', 'WFO')->orderBy('user_id', 'asc')->get() : Schedule::where('hari_kerja', $date)->where('user_id', $statusID)->where('jenis_kerja', 'WFO')->orderBy('user_id', 'asc')->get();
+
+        return view('MasterData/Schedule/index-qr', compact('statusID', 'date', 'employee', 'data'));
     }
 }

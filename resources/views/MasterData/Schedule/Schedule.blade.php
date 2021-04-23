@@ -6,7 +6,10 @@
     <div class="col-12 col-sm-12 col-md-4">
         <div class="card" style="min-height: 850px!important;overflow-x:hidden;overflow-y:scroll;">
             <div class="card-header">
-              <h4>Pegawai</h4>
+                <h4>Pegawai</h4>
+                <div class="card-header-action">
+                    <a href="{{ url('jadwalkerja/qr') }}" class="btn btn-primary btn-sm">Kode QR</a>
+                </div>
             </div>
             <div class="card-body">
                 <ul class="list-unstyled list-unstyled-border  list-employee-schedule">

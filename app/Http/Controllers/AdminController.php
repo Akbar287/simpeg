@@ -9,6 +9,7 @@ use App\Models\WorkUnit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
@@ -186,5 +187,34 @@ class AdminController extends Controller
             'status' => true,
             'message' => 'Change Password has been successfully'
         ], 200);
+    }
+    public function photo()
+    {
+        $title = 'Admin';
+        return view('Admin/photo', compact('title'));
+    }
+    public function setPhoto(Request $request)
+    {
+        $user = User::find(Auth::user()->user_id);
+        if($request->file('image')) {
+            $image = $request->file('image');
+            if ($user->profile_photo != 'nophoto.png') {
+                File::delete(public_path() . '/images/profile/employee/' . $user->profile_photo);
+            }
+            $imageDB = "profile-".time()."." . $user->nip . '.' . $image->getClientOriginalExtension();
+            $image->move(public_path() .'/images/profile/employee/', $imageDB);
+
+            $user->profile_photo = $imageDB;
+            $user->save();
+
+            return redirect('/admin/'.Auth::user()->user_id)->with('msg', '<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Sukses!</strong> Foto Profile sudah diubah.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+        } else {
+            return redirect('/admin/'.Auth::user()->user_id)->with('msg', '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Gagal!</strong> Foto Profile gagal diubah.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+        }
+    }
+    public function ttd()
+    {
+        $title = 'Admin';
+        return view('Admin/ttd', compact('title'));
     }
 }

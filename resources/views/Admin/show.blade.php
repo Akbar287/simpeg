@@ -14,18 +14,6 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <img width="300" class="img-responsive img-thumbnail" src="{{  asset('../images/profile/employee/'.$admin->profile_photo) }}" alt="Foto Profil" />
-                                <div class="m-2 text-center">
-                                    <button class="btn btn-primary btn-show-sig">Tampilkan TTD</button>
-                                    <div class="kbw-signature" style="width: 300px;margin: 20px 0; height: 240px;border: 1px solid rgba(59, 53, 53, 0.233);display:none;"></div>
-                                    @if($admin->user_id == Auth::user()->user_id) <div class="row btn-sig">
-                                        <div class="col-12 text-center">
-                                            <button class="btn btn-primary" id="clear" style="display:none;">Hapus</button>
-                                            <button class="btn btn-primary btn-save-signature" data-id="{{ Auth::user()->user_id }}" style="display:none;">Simpan TTD</button>
-                                        </div>
-                                    </div>
-                                    @endif
-                                    <p style="display: none;" class="text-muted"></p>
-                                </div>
                             </div>
                             <div class="col-md-9">
                                 <div class="ml-5">
@@ -82,7 +70,9 @@
                                     </table>
                                     <div class="my-3">
                                         @if($admin->user_id == Auth::user()->user_id) <button class="btn btn-info" id="btn-change-pw">Ganti Password</button> @else <button class="btn btn-info btn-reset-pw-employee">Password Reset ke 123</button> @endif
+                                        @if($admin->user_id == Auth::user()->user_id) <a href="{{ url('admin/photo') }}" title="Ubah Foto" class="btn btn-success">Ubah Foto</a> @endif
                                         @if($admin->user_id == Auth::user()->user_id) <a href="{{ url('admin/' . $admin->user_id . '/edit') }}" title="Ubah Data" class="btn btn-primary">Ubah Data</a> @endif
+                                        @if($admin->user_id == Auth::user()->user_id) <a href="{{ url('admin/ttd') }}" title="Ubah Data" class="btn btn-primary">Ubah TTD Digital</a> @endif
                                     </div>
                                 </div>
                             </div>
