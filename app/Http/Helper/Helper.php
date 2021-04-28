@@ -156,4 +156,12 @@ class Helper{
         $pdf = PDF::loadview('MasterData/DailyWorkReport/print', compact('employee', 'dailyWorkReport', 'logo'));
         return $pdf->stream('NICT.laporankerjaharian-' . $dailyWorkReport->daily_work_report_id . '.pdf');
     }
+    public static function printEmployeeWorkObj($employeeWorkObjective)
+    {
+        $employee = $employeeWorkObjective->user()->first();
+        $logo = public_path() . '/images/logo.png';
+        $sig = '<img src="data:image/svg+xml;base64,' .base64_encode($employee->signature()->first()->sig_svg). '" width="150" height="100" style="width: 150!important; height:60!important;" />';
+        $pdf = PDF::loadview('EmployeePage/SKP/print', compact('employee', 'employeeWorkObjective', 'logo', 'sig'));
+        return $pdf->stream('NICT.skp-' . $employeeWorkObjective->employee_work_objective_id . '.pdf');
+    }
 }

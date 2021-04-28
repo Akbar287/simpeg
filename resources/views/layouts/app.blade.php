@@ -78,6 +78,7 @@
                         <li class="{{ (Route::currentRouteName() == 'Cuti') ? 'active': '' }} "><a class="nav-link" href="{{ url('/cuti') }}"><i class="fas fa-calendar-minus"></i><span>Cuti</span></a></li>
                         <li class="{{ (Route::currentRouteName() == 'Laporan Kerja Harian') ? 'active': '' }} "><a class="nav-link" href="{{ url('/laporankerja') }}"><i class="fas fa-pen"></i><span>Laporan Kerja Harian</span></a></li>
                         <li class="{{ (Route::currentRouteName() == 'Jadwal') ? 'active': '' }} "><a class="nav-link" href="{{ url('/jadwalkerja') }}"><i class="fas fa-calendar-alt"></i><span>Jadwal Kerja Pegawai</span></a></li>
+                        <li class="{{ (Route::currentRouteName() == 'Sasaran Kinerja Pegawai') ? 'active': '' }} "><a class="nav-link" href="{{ url('/skp') }}"><i class="fas fa-check"></i><span>Kinerja Pegawai</span></a></li>
                         @else
                         <li class="{{ (Route::currentRouteName() == 'Pegawai') ? 'active': '' }}"><a class="nav-link" href="{{ url('/pribadi') }}"><i class="fas fa-users"></i><span>Data Pegawai</span></a></li>
                         <li class="{{ (Route::currentRouteName() == 'Mutasi') ? 'active': '' }}"><a class="nav-link" href="{{ url('/izinmutasi') }}"><i class="fas fa-id-card"></i><span>Mutasi</span></a></li>
@@ -85,6 +86,7 @@
                         <li class="{{ (Route::currentRouteName() == 'Cuti') ? 'active': '' }} "><a class="nav-link" href="{{ url('/izincuti') }}"><i class="fas fa-calendar-minus"></i><span>Cuti</span></a></li>
                         <li class="{{ (Route::currentRouteName() == 'Laporan Kerja Harian') ? 'active': '' }} "><a class="nav-link" href="{{ url('/laporan') }}"><i class="fas fa-pen"></i><span>Laporan Kerja Harian</span></a></li>
                         <li class="{{ (Route::currentRouteName() == 'Jadwal') ? 'active': '' }} "><a class="nav-link" href="{{ url('/jadwal') }}"><i class="fas fa-calendar-alt"></i><span>Jadwal Kerja Pegawai</span></a></li>
+                        <li class="{{ (Route::currentRouteName() == 'Sasaran Kinerja Pegawai') ? 'active': '' }} "><a class="nav-link" href="{{ url('/kinerja') }}"><i class="fas fa-check"></i><span>Kinerja Pegawai</span></a></li>
                         @endif
                     </ul>
                 </aside>

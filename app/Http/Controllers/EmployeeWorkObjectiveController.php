@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Helper\Helper;
 use App\Http\Requests\EmployeeWorkObjectiveRequest;
 use App\Models\EmployeeWorkObjective;
 use App\Models\User;
@@ -94,28 +95,52 @@ class EmployeeWorkObjectiveController extends Controller
             'rating_result' => request('rating_result')
         ];
     }
-    public function index_admin()
+    public function index_admin(Request $request)
     {
-        return view('MasterData/EmployeeWorkObjective/EmployeeWorkObjective');
+        $title = 'Sasaran Kinerja Pegawai';
+        $employee = User::select('user_id')->addSelect('nip')->addSelect('name')->get();
+
+        $date = ($request->date) ? $request->date : date('Y-m');
+        $sDate = $date . '-01';
+        $fDate = $date . '-' . date('d');
+        $employeeID = ($request->employee) ? $request->employee : "0";$data = '';
+        $data = ($employeeID == 0) ? EmployeeWorkObjective::where('start_date', [$sDate, $fDate])->get() : EmployeeWorkObjective::where('user_id', $employeeID)->where('start_date', [$sDate, $fDate])->get();
+        return view('MasterData/SKP/index', compact('title', 'employee', 'employeeID', 'date', 'data'));
     }
     public function create_admin()
     {
-        return view('MasterData/EmployeeWorkObjective/EmployeeWorkObjective');
+        $title = 'Sasaran Kinerja Pegawai';
+        $employee = User::select('user_id')->addSelect('nip')->addSelect('name')->get();
+        return view('MasterData/SKP/create', compact('title', 'employee'));
     }
-    public function show_admin()
+    public function store_admin(EmployeeWorkObjectiveRequest $request)
     {
-        return view('MasterData/EmployeeWorkObjective/EmployeeWorkObjective');
+        $employee = User::find($request->employee);
+        $employeeWorkObjective = $employee->employee_work_objective()->create($this->dataSKP());
+        return redirect('skp/' . $employeeWorkObjective->employee_work_objective_id)->with('msg', '<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Sukses!</strong> Data SKP Sudah Ditambah.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
     }
-    public function edit_admin()
+    public function show_admin(EmployeeWorkObjective $employeeWorkObjective)
     {
-        return view('MasterData/EmployeeWorkObjective/EmployeeWorkObjective');
+        $title = 'Sasaran Kinerja Pegawai';
+        return view('MasterData/SKP/show', compact('title', 'employeeWorkObjective'));
     }
-    public function update_admin()
+    public function edit_admin(EmployeeWorkObjective $employeeWorkObjective)
     {
-        return view('MasterData/EmployeeWorkObjective/EmployeeWorkObjective');
+        $title = 'Sasaran Kinerja Pegawai';
+        return view('MasterData/SKP/edit', compact('title', 'employeeWorkObjective'));
     }
-    public function delete_admin()
+    public function update_admin(EmployeeWorkObjectiveRequest $request, EmployeeWorkObjective $employeeWorkObjective)
     {
-        return view('MasterData/EmployeeWorkObjective/EmployeeWorkObjective');
+        $employeeWorkObjective->update($this->dataSKP());
+        return redirect('skp/' . $employeeWorkObjective->employee_work_objective_id)->with('msg', '<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Sukses!</strong> Data SKP Sudah Diubah.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+    }
+    public function delete_admin(EmployeeWorkObjective $employeeWorkObjective)
+    {
+        $employeeWorkObjective->delete();
+        return redirect('/skp')->with('msg', '<div class="alert alert-success alert-dismissible fade show" role="alert"><strong>Sukses!</strong> Data SKP Sudah Dihapus.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
+    }
+    public function print_admin(EmployeeWorkObjective $employeeWorkObjective)
+    {
+        return Helper::printEmployeeWorkObj($employeeWorkObjective);
     }
 }

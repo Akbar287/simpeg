@@ -64,6 +64,12 @@ Route::middleware(['auth'])->group(function ($route) {
             $route->put('/{laporan}', 'PersonalController@update_dailyWork');
         });
 
+        $route->prefix('kinerja')->name('Sasaran Kinerja Pegawai')->group(function($route) {
+            $route->get('/', 'PersonalController@index_skp');
+            $route->get('/{employeeWorkObjective}', 'PersonalController@show_skp');
+            $route->get('/{employeeWorkObjective}/print', 'PersonalController@cetak_skp');
+        });
+
         $route->prefix('absen')->name('Absensi')->group(function($route) {
             $route->get('/', 'PersonalController@index_attendance');
             $route->get('/create', 'PersonalController@create_attendance');
@@ -182,6 +188,17 @@ Route::middleware(['auth'])->group(function ($route) {
             $route->get('/{furlough}/edit', 'FurloughController@edit_admin');
             $route->put('/{furlough}', 'FurloughController@update_admin');
             $route->delete('/{furlough}', 'FurloughController@delete_admin');
+        });
+
+        $route->name('Sasaran Kinerja Pegawai')->prefix('skp')->group(function($route) {
+            $route->get('/', 'EmployeeWorkObjectiveController@index_admin');
+            $route->post('/', 'EmployeeWorkObjectiveController@store_admin');
+            $route->get('/create', 'EmployeeWorkObjectiveController@create_admin');
+            $route->get('/{employeeWorkObjective}', 'EmployeeWorkObjectiveController@show_admin');
+            $route->get('/{employeeWorkObjective}/edit', 'EmployeeWorkObjectiveController@edit_admin');
+            $route->get('/{employeeWorkObjective}/print', 'EmployeeWorkObjectiveController@print_admin');
+            $route->put('/{employeeWorkObjective}', 'EmployeeWorkObjectiveController@update_admin');
+            $route->delete('/{employeeWorkObjective}', 'EmployeeWorkObjectiveController@delete_admin');
         });
 
         $route->name('Mutasi')->prefix('mutation')->group(function($route) {

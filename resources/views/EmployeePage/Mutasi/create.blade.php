@@ -74,7 +74,7 @@
                             </div>
                         </div>
                         <div class="col-12">
-                            <a href="{{ url('/mutation') }}" title="Kembali" class="btn btn-primary">Kembali</a>
+                            <a href="{{ url('/izinmutasi') }}" title="Kembali" class="btn btn-primary">Kembali</a>
                             <button type="submit" title="Simpan Data" class="btn btn-success">Ajukan</button>
                         </div>
                     </div>

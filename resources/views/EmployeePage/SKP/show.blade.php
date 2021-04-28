@@ -1,15 +1,29 @@
-@extends('Employee.detailEmployee')
+@extends('layouts.app')
 
-@section('subcontent')
+@section('content')
 <div class="row justify-content-center">
     <div class="col-lg-12 col-md-12 col-12 col-sm-12">
         @if(session('status')) {!! session('status') !!} @endif
         <div class="card">
             <div class="card-header">
-                <h4>Sasaran Kinerja Pegawai</h4>
+                <h4>{{ Route::currentRouteName() }}</h4>
             </div>
             <div class="card-body">
                 <div class="row">
+                    <div class="col-12 col-sm-12 col-md-12">
+                        <div class="form-group">
+                            <label for="employee">Pegawai</label>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <div class="input-group-text"><i class="fas fa-user"></i></div>
+                                </div>
+                                <input type="text" name="employee" class="form-control" readonly value="{{ $employeeWorkObjective->user()->first()->name }}" id="employee">
+                                <div class="invalid-feedback">
+                                    @error('employee') {{ $message }} @enderror
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-12 col-sm-12 col-md-6">
                         <div class="form-group">
                             <label for="start_date">Tanggal Mulai Periode</label>
@@ -160,25 +174,16 @@
                                 <div class="input-group-prepend">
                                     <div class="input-group-text"><i class="fas fa-users-cog"></i></div>
                                 </div>
-                                <select disabled class="form-control @error('rating_result') is-invalid @enderror" name="rating_result" id="rating_result">
-                                    <option {{ $employeeWorkObjective->rating_result == 'Kurang Baik' ? 'selected' : '' }} value="Kurang Baik">Kurang Baik</option>
-                                        <option {{ $employeeWorkObjective->rating_result == 'Baik' ? 'selected' : '' }} value="Baik">Baik</option>
-                                        <option {{ $employeeWorkObjective->rating_result == 'Cukup Baik' ? 'selected' : '' }} value="Cukup Baik">Cukup Baik</option>
-                                        <option {{ $employeeWorkObjective->rating_result == 'Sangat Baik' ? 'selected' : '' }} value="Sangat Baik">Sangat Baik</option>
-                                </select>
+                                <input type="text" readonly name="rating_result" class="form-control" value="{{ $employeeWorkObjective->rating_result }}" id="rating_result">
                                 <div class="invalid-feedback">
                                     @error('rating_result') {{ $message }} @enderror
                                 </div>
                             </div>
                         </div>
                     </div>
-
                     <div class="col-12">
-                        <a href="{{ url('pegawai/' . $employee->user_id . '/skp') }}" title="Kembali" class="btn btn-primary">Kembali</a>
-                        <a href="{{ url('pegawai/' . $employee->user_id . '/skp/' . $employeeWorkObjective->employee_work_objective_id . '/edit') }}" title="Ubah Data" class="btn btn-success">Ubah Data</a>
-                        <a target="_blank" href="{{ url('skp/' . $employeeWorkObjective->employee_work_objective_id . '/print') }}" title="Cetak" class="btn btn-info">Cetak</a>
-                        <button type="submit" title="Hapus Data" class="btn btn-danger" onclick="return confirm('Data SKP akan dihapus!\nLanjutkan?') ? document.getElementById('formDeleteSKP').submit() :null">Hapus</button>
-                        <form action="{{ url('pegawai/' . $employee->user_id . '/skp/'. $employeeWorkObjective->employee_work_objective_id) }}" method="post" id="formDeleteSKP"> @csrf @method('delete')</form>
+                        <a href="{{ url('/kinerja') }}" title="Kembali" class="btn btn-primary">Kembali</a>
+                        <a target="_blank" href="{{ url('kinerja/' . $employeeWorkObjective->employee_work_objective_id . '/print') }}" title="Cetak" class="btn btn-info">Cetak</a>
                     </div>
                 </div>
             </div>

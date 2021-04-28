@@ -113,7 +113,7 @@
                             <div class="form-group">
                                 <label for="information">Keterangan</label>
                                 <div class="input-group">
-                                    <textarea readonly autocomplete="off" class="form-control @error('information') is-invalid @enderror" name="information" id="information" rows="5">{{ $attendance->information }}</textarea>
+                                    <textarea readonly autocomplete="off" class="form-control @error('information') is-invalid @enderror" name="information" id="information" rows="5">{{ $attendance->keterangan }}</textarea>
                                     <div class="invalid-feedback">
                                         @error('information') {{ $message }} @enderror
                                     </div>

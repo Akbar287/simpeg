@@ -139,7 +139,7 @@
                                     </div>
                                     <select disabled class="custom-select @error('long_furlough') is-invalid @enderror" name="long_furlough" id="long_furlough">
                                         @for($i=1;$i <= 20; $i++)
-                                        <option value="{{ $i }}" {{ ($i == $furlough->long_furlough) }}>{{ $i }}</option>
+                                        <option value="{{ $i }}" {{ ($i == $furlough->long_furlough) ? 'selected' : '' }}>{{ $i }}</option>
                                         @endfor
                                     </select>
                                     <div class="invalid-feedback">

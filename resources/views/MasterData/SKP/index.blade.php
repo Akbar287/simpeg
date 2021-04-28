@@ -6,28 +6,26 @@
         @if(session('status')) {!! session('status') !!} @endif
         <div class="card">
             <div class="card-header">
-                <h4>Mutasi</h4>
+                <h4>Sasaran kinerja Pegawai</h4>
                 <div class="card-header-action">
-                    <a href="{{ url('/mutation/create') }}" class="btn btn-primary">Tambah Data</a>
+                    <a href="{{ url('/skp/create') }}" class="btn btn-primary">Tambah Data</a>
                 </div>
             </div>
             <div class="card-body">
                 @if(session('msg')){!! session('msg')  !!} @endif
-                <form action="{{ url('/mutation') }}" method="get">@csrf
+                <form action="{{ url('/skp') }}" method="get">@csrf
                     <div class="form-group row justify-content-center">
                         <div class="col-12 col-sm-12 py-2 col-md-3">
-                            <select name="status" id="status" class="custom-select">
-                                <option value="9" {{ ("9" == $statusID) ? 'selected': '' }}>Semua status</option>
-                                @if(!is_null($status) && !empty($status)) @foreach($status as $statu)
-                                <option value="{{ Helper::statusMutationArray($statu) }}" {{ (Helper::statusMutationArray($statu) == $statusID) ? 'selected': '' }}>{{ $statu }}</option>
+                            <select name="employee" id="employee" class="custom-select">
+                                <option value="0" {{ ("0" == $employeeID) ? 'selected': '' }}>Semua Pegawai</option>
+                                @if(!is_null($employee) && !empty($employee)) @foreach($employee as $employ)
+                                <option value="{{ $employ->user_id }}" {{ (($employ->user_id == $employeeID) ? "selected" : '') }}>{{ $employ->name .' - '. $employ->nip }}</option>
                                 @endforeach @endif
                             </select>
                         </div>
                         <div class="col-12 col-sm-12 py-2 col-md-6">
                             <div class="input-group input-daterange">
-                                <input class="form-control" type="date" value="{{ $fromDate }}" name="fromDate" id="fromDate">
-                                <div class="input-group-addon px-2">S/d</div>
-                                <input class="form-control" type="date" value="{{ $toDate }}" name="toDate" id="toDate">
+                                <input class="form-control" type="month" value="{{ $date }}" name="date" id="date">
                                 <button class="btn btn-primary btn-sm mx-2" type="submit"><i class="fa fa-check"></i></button>
                             </div>
                         </div>
@@ -41,22 +39,22 @@
                                 <thead>
                                     <tr>
                                         <th>ID</th>
+                                        <th>Awal Periode</th>
+                                        <th>Akhir Periode</th>
                                         <th>Nama</th>
-                                        <th>Unit Kerja</th>
-                                        <th>Waktu Dibuat</th>
-                                        <th>status</th>
+                                        <th>Nilai</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach($data as $mutation)
+                                    @foreach($data as $skp)
                                     <tr>
                                         <td>{{ $loop->iteration }}</td>
-                                        <td>{{ $mutation->name }}</td>
-                                        <td>{{ $mutation->new_work_unit }}</td>
-                                        <td>{{ Helper::time($mutation->date_mutation) }}</td>
-                                        <td>{{ Helper::statusMutation($mutation->status) }}</td>
-                                        <td><a href="{{ url('mutation/'.$mutation->mutation_id) }}" class="btn btn-sm btn-primary btn-sm" title="Detail">Detail</a></td>
+                                        <td>{{ Helper::time($skp->start_date) }}</td>
+                                        <td>{{ Helper::time($skp->finish_date) }}</td>
+                                        <td>{{ $skp->user()->first()->name }}</td>
+                                        <td>{{ $skp->rating_result }}</td>
+                                        <td><a href="{{ url('skp/'.$skp->employee_work_objective_id) }}" class="btn btn-sm btn-primary btn-sm" title="Detail">Detail</a></td>
                                     </tr>
                                     @endforeach
                                 </tbody>

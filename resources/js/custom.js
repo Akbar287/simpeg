@@ -962,6 +962,13 @@ if(document.location.pathname.split('/')[1] == 'mutation') {
     })
 }
 
+if(document.location.pathname.split('/')[1] == 'skp' || document.location.pathname.split('/')[1] == 'kinerja') {
+    $('.table-data').dataTable({
+        language: {
+            url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Indonesian.json'
+        }
+    });
+}
 if(document.location.pathname.split('/')[1] == 'pegawai') {
 
     $('.table-data').dataTable({

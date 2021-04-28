@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Helper\Helper;
 use App\Models\Attendance;
 use App\Models\DailyWorkReport;
+use App\Models\EmployeeWorkObjective;
 use App\Models\Employments;
 use App\Models\Furlough;
 use App\Models\Kehadiran;
@@ -441,5 +443,19 @@ class PersonalController extends Controller
         } else {
             return redirect('/pribadi' )->with('msg', '<div class="alert alert-danger alert-dismissible fade show" role="alert"><strong>Gagal!</strong> Foto Profile gagal diubah.<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button></div>');
         }
+    }
+    public function index_skp()
+    {
+        $title = 'Sasaran Kinerja Pegawai';
+        return view('EmployeePage/SKP/index', compact('title'));
+    }
+    public function show_skp(EmployeeWorkObjective $employeeWorkObjective)
+    {
+        $title = 'Sasaran Kinerja Pegawai';
+        return view('EmployeePage/SKP/show', compact('title', 'employeeWorkObjective'));
+    }
+    public function cetak_skp(EmployeeWorkObjective $employeeWorkObjective)
+    {
+        return Helper::printEmployeeWorkObj($employeeWorkObjective);
     }
 }

@@ -155,9 +155,9 @@
                                 <label for="information">Keterangan</label>
                                 <div class="input-group">
                                     @if($mutation->status == 3 || $mutation->status == 4)
-                                    <textarea value="{{ $mutation->decree()->first()->information }}" autocomplete="off" class="form-control @error('information') is-invalid @enderror" name="information" id="information" rows="5"></textarea>
+                                    <textarea autocomplete="off" class="form-control @error('information') is-invalid @enderror" name="information" id="information" rows="5">{{ $mutation->decree()->first()->information }}</textarea>
                                     @else
-                                    <textarea value="" autocomplete="off" class="form-control @error('information') is-invalid @enderror" name="information" id="information" rows="5"></textarea>
+                                    <textarea autocomplete="off" class="form-control @error('information') is-invalid @enderror" name="information" id="information" rows="5"></textarea>
                                     @endif
                                     <div class="invalid-feedback">
                                         @error('information') {{ $message }} @enderror
