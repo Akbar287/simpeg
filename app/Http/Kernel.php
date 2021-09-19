@@ -62,6 +62,7 @@ class Kernel extends HttpKernel
         'cekLogin' => \App\Http\Middleware\cekLogin::class,
         'isAdmin' => \App\Http\Middleware\isAdmin::class,
         'isEmployee' => \App\Http\Middleware\isEmployee::class,
+        'isLeader' => \App\Http\Middleware\isLeader::class,
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,

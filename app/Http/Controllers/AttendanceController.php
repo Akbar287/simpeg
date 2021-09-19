@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 class AttendanceController extends Controller
 {
+    public $print;
     /**
      * Display a listing of the resource.
      *
@@ -120,10 +121,25 @@ class AttendanceController extends Controller
             'keterangan' => request('information')
         ];
     }
+    public function printSetting(Request $request)
+    {
+        $user = $request->get('user');
+        $periode = $request->get('date');
+        $month = explode('-', $periode);
+        $month = ($month['1'] == 12 || $month['1'] == '12') ? $month = [intval($month['0']) + 1, 1] : $month = [ intval($month['0']), intval($month['1']) + 1 ];
+        $start_date = date($periode . '-01 00:00:00');
+        $finish_date = date($month['0'] . '-'. $month['1'] . '-01 00:00:00');
+        $user = User::where('user_id', intval($user))->first();
+        if(is_null($user)) return response()->json(['message' => 'No user found!', 'status' => 'error', 'data' => []],302);
+        $attendance = Attendance::select('start_work')->addSelect('finish_work')->addSelect('jenis_kerja')->addSelect('keterangan')->addSelect('date_work')->whereBetween('attendances.date_work', [$start_date, $finish_date])->where('user_id', $user->user_id)->get();
+        $occupation = User::select('occupation_group_name')->where('users.user_id', $user->user_id)->join('occupations', 'occupations.user_id', 'users.user_id')->join('occupation_groups', 'occupation_groups.occupation_group_id', 'occupations.occupation_group_id')->first()->toArray()['occupation_group_name'];
+        return Helper::print_attendance_personal($user, $periode, $attendance, $occupation);exit;
+    }
     public function index_admin(Request $request)
     {
         $status = [ 'Tanpa Keterangan','Hadir', 'Izin', 'Sakit', 'Cuti', 'Perjalanan Dinas'];
         $employee = User::select('users.user_id')->addSelect('users.name')->addSelect('users.nip')->addSelect('employment_name')->join('user_role', 'users.user_id', 'user_role.user_id')->join('roles', 'roles.id', 'user_role.id')->join('occupations', 'occupations.user_id', 'users.user_id')->join('employments', 'employments.employment_id', 'occupations.employment_id')->get();
+        $users = User::get();
 
         $dynamic_url = explode('?', url()->full());
         $dynamic_url = (count($dynamic_url) > 1) ? end($dynamic_url) : '';
@@ -150,7 +166,7 @@ class AttendanceController extends Controller
             }
         }
 
-        return view('MasterData/Attendance/index', compact('status', 'date', 'statusID', 'employee', 'employeeID', 'data', 'dynamic_url'));
+        return view('MasterData/Attendance/index', compact('status', 'date', 'statusID', 'employee', 'employeeID', 'data', 'dynamic_url', 'users'));
     }
     public function create_admin()
     {
@@ -229,5 +245,45 @@ class AttendanceController extends Controller
         $employees = User::select('nip')->addSelect('name')->orderBy('name', 'asc')->get();
 
         return Helper::printAttendance($data, $status, $date, $lastDay, $employees, $ketStatus);
+    }
+
+    public function index_leader(Request $request)
+    {
+        $status = [ 'Tanpa Keterangan','Hadir', 'Izin', 'Sakit', 'Cuti', 'Perjalanan Dinas'];
+        $employee = User::select('users.user_id')->addSelect('users.name')->addSelect('users.nip')->addSelect('employment_name')->join('user_role', 'users.user_id', 'user_role.user_id')->join('roles', 'roles.id', 'user_role.id')->join('occupations', 'occupations.user_id', 'users.user_id')->join('employments', 'employments.employment_id', 'occupations.employment_id')->get();
+        $users = User::get();
+        $dynamic_url = explode('?', url()->full());
+        $dynamic_url = (count($dynamic_url) > 1) ? end($dynamic_url) : '';
+
+        $date = ($request->date) ? $request->date : date('Y-m');
+        $idate = explode('-', $date);
+        $start_date = $idate['0'] . '-' . $idate['1'] . '-01';
+        $finish_date = date("Y-m-t", strtotime($start_date));
+
+        $statusID = ($request->status) ? $request->status : 9;
+        $employeeID = ($request->employee) ? $request->employee : 0;
+        $data=[];
+        if($employeeID != 0) {
+            if($statusID != 9) {
+                $data = Attendance::select('users.nip')->addSelect('attendances.attendance_id')->addSelect('attendances.jenis_kerja')->addSelect('users.name')->addSelect('attendances.date_work')->addSelect('kehadiran.kehadiran_id')->addSelect('kehadiran.name as kehadiran_name')->join('kehadiran_attendance', 'kehadiran_attendance.attendance_id', 'attendances.attendance_id')->join('kehadiran', 'kehadiran.kehadiran_id', 'kehadiran_attendance.kehadiran_id')->join('users', 'users.user_id', 'attendances.user_id')->whereBetween('attendances.date_work', [$start_date, $finish_date . ' 23:59:59'])->orderBy('attendances.date_work', 'desc')->where('kehadiran.kehadiran_id', $statusID)->where('users.user_id', $employeeID)->get();
+            } else {
+                $data = Attendance::select('users.nip')->addSelect('attendances.attendance_id')->addSelect('attendances.jenis_kerja')->addSelect('users.name')->addSelect('attendances.date_work')->addSelect('kehadiran.kehadiran_id')->addSelect('kehadiran.name as kehadiran_name')->join('kehadiran_attendance', 'kehadiran_attendance.attendance_id', 'attendances.attendance_id')->join('kehadiran', 'kehadiran.kehadiran_id', 'kehadiran_attendance.kehadiran_id')->join('users', 'users.user_id', 'attendances.user_id')->whereBetween('attendances.date_work', [$start_date, $finish_date . ' 23:59:59'])->orderBy('attendances.date_work', 'desc')->where('users.user_id', $employeeID)->get();
+            }
+        } else {
+            if($statusID != 9) {
+                $data = Attendance::select('users.nip')->addSelect('attendances.attendance_id')->addSelect('attendances.jenis_kerja')->addSelect('users.name')->addSelect('attendances.date_work')->addSelect('kehadiran.kehadiran_id')->addSelect('kehadiran.name as kehadiran_name')->join('kehadiran_attendance', 'kehadiran_attendance.attendance_id', 'attendances.attendance_id')->join('kehadiran', 'kehadiran.kehadiran_id', 'kehadiran_attendance.kehadiran_id')->join('users', 'users.user_id', 'attendances.user_id')->whereBetween('attendances.date_work', [$start_date, $finish_date . ' 23:59:59'])->orderBy('attendances.date_work', 'desc')->where('kehadiran.kehadiran_id', $statusID)->get();
+            } else {
+                $data = Attendance::select('users.nip')->addSelect('attendances.attendance_id')->addSelect('attendances.jenis_kerja')->addSelect('users.name')->addSelect('attendances.date_work')->addSelect('kehadiran.kehadiran_id')->addSelect('kehadiran.name as kehadiran_name')->join('kehadiran_attendance', 'kehadiran_attendance.attendance_id', 'attendances.attendance_id')->join('kehadiran', 'kehadiran.kehadiran_id', 'kehadiran_attendance.kehadiran_id')->join('users', 'users.user_id', 'attendances.user_id')->whereBetween('attendances.date_work', [$start_date, $finish_date . ' 23:59:59'])->orderBy('attendances.date_work', 'desc')->get();
+            }
+        }
+
+        return view('MasterData/Attendance/index', compact('status', 'date', 'statusID', 'employee', 'employeeID', 'data', 'dynamic_url', 'users'));
+    }
+    public function show_leader(Attendance $attendance)
+    {
+        $employee= $attendance->user()->first();
+        $admins = User::select('users.user_id')->addSelect('users.name')->addSelect('employment_name')->where('roles.name', 'admin')->join('user_role', 'users.user_id', 'user_role.user_id')->join('roles', 'roles.id', 'user_role.id')->join('occupations', 'occupations.user_id', 'users.user_id')->join('employments', 'employments.employment_id', 'occupations.employment_id')->get();
+        $kehadiran = Kehadiran::all();
+        return view('MasterData/Attendance/show', compact('employee', 'kehadiran', 'admins', 'attendance'));
     }
 }

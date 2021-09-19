@@ -127,4 +127,25 @@ class DailyWorkReportController extends Controller
     {
         return Helper::printDailyWorkReport($dailyWorkReport);
     }
+    public function print_leader($dailyWorkReport)
+    {
+        $dailyWorkReport = DailyWorkReport::find($dailyWorkReport);
+        return Helper::printDailyWorkReport($dailyWorkReport);
+    }
+    public function index_leader(Request $request)
+    {
+        $employee = User::select('users.user_id')->addSelect('users.name')->addSelect('users.nip')->addSelect('employment_name')->join('user_role', 'users.user_id', 'user_role.user_id')->join('roles', 'roles.id', 'user_role.id')->join('occupations', 'occupations.user_id', 'users.user_id')->join('employments', 'employments.employment_id', 'occupations.employment_id')->get();
+        $date = ($request->date) ? $request->date : date('Y') . '-' . date('m') . '-'. date('d');
+        $employeeID = ($request->employee) ? $request->employee : 0;
+        $data = ($employeeID == 0) ?  DailyWorkReport::select('users.nip')->addSelect('users.name')->addSelect('daily_work_reports.date_work')->addSelect('daily_work_reports.daily_work_report_id')->join('user_daily_work_report', 'user_daily_work_report.daily_work_report_id', 'daily_work_reports.daily_work_report_id')->join('users', 'users.user_id', 'user_daily_work_report.user_id')->where('daily_work_reports.date_work', $date)->orderBy('daily_work_reports.created_at', 'desc')->get() : DailyWorkReport::select('users.nip')->addSelect('users.name')->addSelect('daily_work_reports.date_work')->addSelect('daily_work_reports.daily_work_report_id')->join('user_daily_work_report', 'user_daily_work_report.daily_work_report_id', 'daily_work_reports.daily_work_report_id')->join('users', 'users.user_id', 'user_daily_work_report.user_id')->where('daily_work_reports.date_work', $date)->where('users.user_id', $employeeID)->orderBy('daily_work_reports.created_at', 'desc')->get();
+
+        return view('MasterData/DailyWorkReport/index', compact('employee', 'date', 'employeeID', 'data'));
+    }
+    public function show_leader($dailyWorkReport)
+    {
+        $dailyWorkReport = DailyWorkReport::find($dailyWorkReport);
+        $employee = $dailyWorkReport->user()->first();
+
+        return view('MasterData/DailyWorkReport/show', compact('employee', 'dailyWorkReport'));
+    }
 }

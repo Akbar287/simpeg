@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class AdminController extends Controller
 {
@@ -36,7 +37,9 @@ class AdminController extends Controller
         $title = 'Admin';
         $admins = User::select('users.user_id', 'users.name', 'users.nip', 'users.profile_photo')->where('roles.name', 'admin')->join('user_role', 'users.user_id', 'user_role.user_id')->join('roles', 'roles.id', 'user_role.id')->get();
         $employees = User::select('users.user_id', 'users.name', 'users.nip', 'users.profile_photo')->where('roles.name', 'pegawai')->join('user_role', 'users.user_id', 'user_role.user_id')->join('roles', 'roles.id', 'user_role.id')->get();
-        return view('Admin/create', compact('employees', 'admins', 'title'));
+        $leaders = User::select('users.user_id', 'users.name', 'users.nip', 'users.profile_photo')->where('roles.name', 'pimpinan')->join('user_role', 'users.user_id', 'user_role.user_id')->join('roles', 'roles.id', 'user_role.id')->get();
+        $roles = Role::get();
+        return view('Admin/create', compact('employees', 'admins', 'leaders', 'title', 'roles'));
     }
 
     /**
@@ -137,40 +140,72 @@ class AdminController extends Controller
     public function role(Request $request)
     {
         $request->validate([
-            'user_id' => ['required', 'numeric']
+            'user_id' => ['required', 'numeric'],
+            'role_id' => ['required', 'numeric'],
         ]);
 
         $admin = User::select('users.user_id', 'users.name', 'users.nip', 'users.profile_photo')->where('roles.name', 'admin')->join('user_role', 'users.user_id', 'user_role.user_id')->join('roles', 'roles.id', 'user_role.id')->count();
-
-        $employee = User::find($request->user_id);
-
-        $role = $employee->role()->first();
-        if($employee->user_id == Auth::user()->user_id) return response()->json([
+        $employee = User::select('users.user_id', 'users.name', 'users.nip', 'users.profile_photo')->where('roles.name', 'pegawai')->join('user_role', 'users.user_id', 'user_role.user_id')->join('roles', 'roles.id', 'user_role.id')->count();
+        $leader = User::select('users.user_id', 'users.name', 'users.nip', 'users.profile_photo')->where('roles.name', 'pimpinan')->join('user_role', 'users.user_id', 'user_role.user_id')->join('roles', 'roles.id', 'user_role.id')->count();
+        $myRole = Role::select('id')->get();
+        foreach($myRole as $role) {
+            $roles[] = $role->id;
+        }
+        $user = User::find($request->user_id);
+        $from = $user->role()->first()->id;
+        $to = $request->role_id;
+        if($from == $to) return response()->json([
             'status' => false,
-            'message' => 'Employee failed to change role'
-        ], 401);
+            'message' => 'Failed to change Role!. Must be different role.'
+        ], 302);
+        if(!in_array($to, $roles)) return response()->json([
+            'status' => false,
+            'message' => 'No Role Found!'
+        ], 302);
+        if($user->user_id == Auth::user()->user_id) return response()->json([
+            'status' => false,
+            'message' => 'failed to change role! you cant change your role!'
+        ], 302);
 
-
-
-        if($role->name == 'admin') {
-
+        if($from == 1) {
             if($admin == 1) return response()->json([
                 'status' => false,
                 'message' => 'Admin must have one or more in this system'
-            ], 401);
-
-            DB::table('user_role')->where('user_id', $employee->user_id)->update([
-                'id' => 2
-            ]);
+            ], 302);
+            else {
+                DB::table('user_role')->where('user_id', $user->user_id)->update([
+                    'id' => $to
+                ]);
+            }
+        } else if($from == 2) {
+            if($employee == 1) return response()->json([
+                'status' => false,
+                'message' => 'Employee must have one or more in this system'
+            ], 302);
+            else {
+                DB::table('user_role')->where('user_id', $user->user_id)->update([
+                    'id' => $to
+                ]);
+            }
+        } else if($from == 3) {
+            if($leader == 1) return response()->json([
+                'status' => false,
+                'message' => 'Leader must have one or more in this system'
+            ], 302);
+            else {
+                DB::table('user_role')->where('user_id', $user->user_id)->update([
+                    'id' => $to
+                ]);
+            }
         } else {
-            DB::table('user_role')->where('user_id', $employee->user_id)->update([
-                'id' => 1
-            ]);
+            return response()->json([
+                'status' => false,
+                'message' => 'No Role Found!'
+            ], 302);
         }
-
         return response()->json([
             'status' => true,
-            'message' => 'Employee has been change role'
+            'message' => 'Success to change role'
         ], 200);
     }
     public function change(Request $request, User $admin)

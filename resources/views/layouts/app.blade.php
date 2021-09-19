@@ -51,7 +51,7 @@
                 <aside id="sidebar-wrapper">
                     <div class="sidebar-brand">
                         <a href="{{ url('/') }}">
-                            <img src="{{ asset('/images/logo/logo.svg') }}" alt="logo" class="img-responsive" width="30"> SIMPEG</a>
+                            <img src="{{ asset('/images/logo/logo.svg') }}" alt="logo" class="img-responsive" width="30"></a>
                     </div>
                     <div class="sidebar-brand sidebar-brand-sm">
                         <a href="{{ url('/') }}">
@@ -79,6 +79,11 @@
                         <li class="{{ (Route::currentRouteName() == 'Laporan Kerja Harian') ? 'active': '' }} "><a class="nav-link" href="{{ url('/laporankerja') }}"><i class="fas fa-pen"></i><span>Laporan Kerja Harian</span></a></li>
                         <li class="{{ (Route::currentRouteName() == 'Jadwal') ? 'active': '' }} "><a class="nav-link" href="{{ url('/jadwalkerja') }}"><i class="fas fa-calendar-alt"></i><span>Jadwal Kerja Pegawai</span></a></li>
                         <li class="{{ (Route::currentRouteName() == 'Sasaran Kinerja Pegawai') ? 'active': '' }} "><a class="nav-link" href="{{ url('/skp') }}"><i class="fas fa-check"></i><span>Kinerja Pegawai</span></a></li>
+
+                        @elseif(Auth::user()->role()->first()->name == 'pimpinan')
+                        <li class="{{ (Route::currentRouteName() == 'Absensi') ? 'active': '' }}"><a class="nav-link" href="{{ url('/reporting/attendance') }}"><i class="fas fa-calendar-check"></i><span>Laporan Absensi</span></a></li>
+                        <li class="{{ (Route::currentRouteName() == 'Laporan Kerja Harian') ? 'active': '' }} "><a class="nav-link" href="{{ url('/reporting/working') }}"><i class="fas fa-pen"></i><span>Laporan Kerja Harian</span></a></li>
+
                         @else
                         <li class="{{ (Route::currentRouteName() == 'Pegawai') ? 'active': '' }}"><a class="nav-link" href="{{ url('/pribadi') }}"><i class="fas fa-users"></i><span>Data Pegawai</span></a></li>
                         <li class="{{ (Route::currentRouteName() == 'Mutasi') ? 'active': '' }}"><a class="nav-link" href="{{ url('/izinmutasi') }}"><i class="fas fa-id-card"></i><span>Mutasi</span></a></li>

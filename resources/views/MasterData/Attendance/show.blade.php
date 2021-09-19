@@ -135,10 +135,12 @@
                             </div>
                         </div>
                         <div class="col-12">
-                            <a href="{{ url('absensi') }}" title="Kembali" class="btn btn-primary">Kembali</a>
+                            <a href="{{ url()->previous() }}" title="Kembali" class="btn btn-primary">Kembali</a>
+                            @if(Auth::user()->role()->first()->name != 'pimpinan')
                             <a href="{{ url('absensi/' . $attendance->attendance_id . '/edit') }}" title="Ubah Data" class="btn btn-success">Ubah Data</a>
                             <button type="submit" title="Hapus Data" class="btn btn-danger" onclick="return confirm('Data Absensi akan dihapus!\nLanjutkan?') ? document.getElementById('formDeleteAbsensi').submit() :null">Hapus</button>
-                        <form action="{{ url('absensi/'. $attendance->attendance_id) }}" method="post" id="formDeleteAbsensi"> @csrf @method('delete')</form>
+                            <form action="{{ url('absensi/'. $attendance->attendance_id) }}" method="post" id="formDeleteAbsensi"> @csrf @method('delete')</form>
+                            @endif
                         </div>
                     </div>
             </div>

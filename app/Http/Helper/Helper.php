@@ -103,6 +103,12 @@ class Helper{
         }
 
     }
+    public static function print_attendance_personal($user, $periode, $attendance, $occupation)
+    {
+        $logo = public_path() . '/images/logo.png';
+        $pdf = PDF::loadview('MasterData/Attendance/printPersonal', compact('user', 'periode', 'attendance', 'logo', 'occupation'));
+        return $pdf->stream('NICT.' . $user->user_id . '-'  . $periode . '.pdf');
+    }
     public static function getSkNumberFurlough()
     {
         $sk_number = Decree::select('sk_number')->where('title', 'cuti')->get()->last();

@@ -1,9 +1,8 @@
 <?php
 
-use App\Models\Furlough;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
-use App\Models\User;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -23,6 +22,23 @@ Route::middleware(['cekLogin'])->group(function($route) {
 
 Route::middleware(['auth'])->group(function ($route) {
     $route->get('/home', 'HomeController@index')->name('Dashboard');
+
+    $route->middleware(['isLeader'])->group(function ($route) {
+        $route->prefix('reporting')->group(function($route) {
+            $route->get('/', 'HomeController@reporting_leader');
+            $route->name('Laporan Kerja Harian')->prefix('working')->group(function($route) {
+                $route->get('/', 'DailyWorkReportController@index_leader');
+                $route->get('/{dailyWorkReport}', 'DailyWorkReportController@show_leader');
+                $route->get('/{dailyWorkReport}/print', 'DailyWorkReportController@print_leader');
+            });
+
+            $route->name('Absensi')->prefix('attendance')->group(function($route) {
+                $route->get('/', 'AttendanceController@index_leader');
+                $route->get('/print', 'AttendanceController@printSetting');
+                $route->get('/{attendance}', 'AttendanceController@show_leader');
+            });
+        });
+    });
 
     $route->middleware(['isEmployee'])->group(function ($route) {
 
@@ -81,7 +97,6 @@ Route::middleware(['auth'])->group(function ($route) {
         $route->prefix('jadwal')->name('Jadwal')->group(function($route) {
             $route->get('/', 'PersonalController@index_schedule');
         });
-
     });
 
     $route->middleware(['isAdmin'])->group(function ($route) {
@@ -226,7 +241,7 @@ Route::middleware(['auth'])->group(function ($route) {
             $route->get('/', 'AttendanceController@index_admin');
             $route->get('/create', 'AttendanceController@create_admin');
             $route->post('/', 'AttendanceController@store_admin');
-            $route->get('/print', 'AttendanceController@print');
+            $route->get('/print', 'AttendanceController@printSetting');
             $route->get('/{attendance}', 'AttendanceController@show_admin');
             $route->get('/{attendance}/edit', 'AttendanceController@edit_admin');
             $route->put('/{attendance}', 'AttendanceController@update_admin');

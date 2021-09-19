@@ -32,14 +32,14 @@ class HomeController extends Controller
             'admin' => DB::table('user_role')->where('id', 1)->count(),
             'employee' => DB::table('user_role')->where('id', 2)->count(),
             'pensiun' => DB::table('mutations')->join('mutation_type', 'mutation_type.mutation_id', 'mutations.mutation_id')->join('type_mutations', 'type_mutations.type_mutation_id', 'mutation_type.type_mutation_id')->where('type_mutations.type_mutation_name', 'Pensiun')->count(),
-            'furlough' => DB::table('furloughs')->where('status', 1)->count(),
+            'furlough' => DB::table('furloughs')->where(DB::raw('finish_date < NOW()'))->count(),
         ];
         return view('home', $data);
     }
     public function DataHome()
     {
         $user = User::find(Auth::user()->user_id);
-        if($user->role()->first()->name == 'admin')
+        if($user->role()->first()->name == 'admin' || $user->role()->first()->name == 'pimpinan')
         {
             return response()->json([
                 'chart' => [
@@ -92,5 +92,9 @@ class HomeController extends Controller
         $employee = User::find($request->employee);
         $employee->update(['password' => Hash::make('123')]);
         return response()->json(['message' => 'password has been reset', 'status' => 'success'], 200);
+    }
+    public function reporting_leader()
+    {
+        return view('reporting');
     }
 }

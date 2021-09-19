@@ -8,13 +8,42 @@
             <div class="card-header">
                 <h4>Absensi</h4>
                 <div class="card-header-action">
-                    <a href="{{ url('/absensi/create') }}" class="btn btn-primary">Tambah Data</a>
-                    <a target="_blank" href="{{ url('/absensi/print?' . $dynamic_url) }}" class="btn btn-primary">Cetak</a>
+                    @if(Auth::user()->role()->first()->name != 'pimpinan') <a href="{{ url('/absensi/create') }}" class="btn btn-primary">Tambah Data</a> @endif
+                    <button class="btn btn-primary" id="print_attendance">Cetak</button>
                 </div>
             </div>
+            <form class="modal-part" id="modal-print">
+                <p>Cetak Laporan Absensi Pegawai</p>
+                <div class="form-group">
+                    <label for="employee">Pegawai</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <div class="input-group-text"><i class="fas fa-user"></i></div>
+                        </div>
+                        <select class="custom-select" name="user" id="employee">
+                            @foreach($users as $user)
+                            <option value="{{$user->user_id}}">{{ $user->name }}</option>
+                            @endforeach
+                        </select>
+                        <div class="invalid-feedback">
+                            @error('employee') {{ $message }} @enderror
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-group">
+                        <label for="date">Periode</label>
+                        <div class="input-group">
+                            <div class="input-group input-daterange">
+                                <input class="form-control" type="month" value="{{ date('Y-m') }}" name="date" id="date">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
             <div class="card-body">
                 @if(session('msg')){!! session('msg')  !!} @endif
-                <form action="{{ url('/absensi') }}" method="get">@csrf
+                @if(Auth::user()->role()->first()->name == 'pimpinan')<form action="{{urL('/reporting/attendance')}}" method="get"> @else <form action="{{urL('/absensi')}}" method="get"> @endif @csrf
                     <div class="form-group row justify-content-center">
                         <div class="col-12 col-sm-12 py-2 col-md-3">
                             <select name="status" id="status" class="custom-select">
@@ -42,7 +71,6 @@
                 </form>
                 <div class="row">
                     <div class="col-md-12">
-
                         <div class="table-responsive">
                             <table class="table table-hover table-data">
                                 <thead>
@@ -63,7 +91,7 @@
                                         <td>{{ Helper::time($attendance->date_work) }}</td>
                                         <td>{{ $attendance->jenis_kerja }}</td>
                                         <td>{{ $attendance->kehadiran_name }}</td>
-                                        <td><a href="{{ url('/absensi/'.$attendance->attendance_id) }}" class="btn btn-sm btn-primary btn-sm" title="Detail">Detail</a></td>
+                                        <td>@if(Auth::user()->role()->first()->name == 'pimpinan')<a href="{{ url('/reporting/attendance/'.$attendance->attendance_id) }}" class="btn btn-sm btn-primary btn-sm" title="Detail">Detail</a>@else <a href="{{ url('/absensi/'.$attendance->attendance_id) }}" class="btn btn-sm btn-primary btn-sm" title="Detail">Detail</a> @endif</td>
                                     </tr>
                                     @endforeach
                                 </tbody>

@@ -445,7 +445,7 @@ if(document.location.pathname.split('/')[1] == 'cuti') {
         })
     })
 }
-if(document.location.pathname.split('/')[1] == 'laporankerja') {
+if(document.location.pathname.split('/')[1] == 'laporankerja' || document.location.pathname == '/reporting/working') {
     $(function() {
         $('.table-data').dataTable({
             language: {
@@ -489,48 +489,17 @@ if(document.location.pathname.split('/')[1] == 'admin') {
                 url: '//cdn.datatables.net/plug-ins/1.10.24/i18n/Indonesian.json'
             }
         });
-        $('.btn-remove-admin').on('click', function() {
+        $('.btn-change-role').on('click', function() {
+            const userId = $(this).data('id')
+            const roleIdChoosen = $('.selector-' + userId + ' option:selected').val()
             Swal.fire({
-                title: 'Batalkan Admin ?',
-                text: "Admin terpilih akan dihapus hak akses admin!",
+                title: 'Ubah Hak Akses ?',
+                text: "Pegawai terpilih akan dapat menambah/mengurangi hak akses!",
                 icon: 'question',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Jadikan Pegawai!',
-                cancelButtonText: 'Batalkan'
-              }).then((result) => {
-                if (result.isConfirmed) {
-
-                    $.ajax({
-                        url : document.location.origin + '/api' + document.location.pathname,
-                        type: 'post',
-                        data: {
-                            '_token': $('meta[name="csrf-token"]').attr('content'),
-                            'user_id':  $(this).data('id')
-                        },
-                        success: function() {
-                            location.reload()
-                        }, error: function() {
-                            Swal.fire(
-                              'Gagal!',
-                              'Terjadi Kesalahan.. Cek Koneksi Internet',
-                              'error'
-                            )
-                        }
-                    });
-                }
-              })
-        })
-        $('.btn-add-admin').on('click', function() {
-            Swal.fire({
-                title: 'Jadikan Admin ?',
-                text: "Pegawai terpilih akan dapat hak akses admin!",
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Jadikan Admin!',
+                confirmButtonText: 'Ubah Hak Akses!',
                 cancelButtonText: 'Batalkan'
               }).then((result) => {
                 if (result.isConfirmed) {
@@ -539,14 +508,15 @@ if(document.location.pathname.split('/')[1] == 'admin') {
                         type: 'post',
                         data: {
                             '_token': $('meta[name="csrf-token"]').attr('content'),
-                            'user_id':  $(this).data('id')
+                            'user_id':  userId,
+                            'role_id':  roleIdChoosen,
                         },
                         success: function() {
                             location.reload()
-                        }, error: function() {
+                        }, error: function(err) {
                             Swal.fire(
                               'Gagal!',
-                              'Terjadi Kesalahan.. Cek Koneksi Internet',
+                              err.responseJSON.message,
                               'error'
                             )
                         }
@@ -893,7 +863,7 @@ if(document.location.pathname.split('/')[1] == 'jadwalkerja') {
         }
     })
 }
-if(document.location.pathname.split('/')[1] == 'absensi') {
+if(document.location.pathname.split('/')[1] == 'absensi' || document.location.pathname == '/reporting/attendance') {
     $(function() {
         $('.table-data').dataTable({
             language: {
@@ -901,6 +871,32 @@ if(document.location.pathname.split('/')[1] == 'absensi') {
             }
         });
     })
+    $("#print_attendance").fireModal({
+        title: 'Print',
+        body: $("#modal-print"),
+        footerClass: 'bg-whitesmoke',
+        autoFocus: false,
+        onFormSubmit: function(modal, e, form) {
+            let form_data = $(e.target).serialize();
+            form.stopProgress();
+            modal.find('.modal-body').children('.alert').remove()
+            modal.find('.modal-body').prepend('<div class="alert alert-info">Mengunduh Laporan...\nJika Laporan Tidak terunduh periksa kembali nama pegawai dan periode absensi</div>')
+            document.location.pathname == '/reporting/attendance' ? window.open(document.location.origin + '/reporting/attendance/print?' + form_data) : window.open(document.location.origin + '/absensi/print?' + form_data)
+            e.preventDefault();
+        },
+        shown: function(modal, form) {
+          console.log(form)
+        },
+        buttons: [
+          {
+            text: 'Cetak',
+            submit: true,
+            class: 'btn btn-primary btn-shadow',
+            handler: function(modal) {
+            }
+          }
+        ]
+    });
 }
 if(document.location.pathname.split('/')[1] == 'mutation') {
     $(function() {
@@ -1324,8 +1320,6 @@ if(document.location.pathname.split('/')[1] == 'izinmutasi' || document.location
             $('.wizard-content').children('div:nth-child(2)').slideToggle(500);
             $('.wizard-content').children('div:nth-child(3)').slideToggle(500);
         })
-
-
 
         $('.btn-next-third').on('click', function(e) {
             e.preventDefault()

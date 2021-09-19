@@ -10,7 +10,7 @@
             </div>
             <div class="card-body">
                 @if(session('msg')){!! session('msg')  !!} @endif
-                <form action="{{ url('/laporankerja') }}" method="#">@csrf
+                @if(Auth::user()->role()->first()->name != 'pimpinan')<form action="{{ url('/laporankerja') }}" method="#">@csrf @endif
                     <div class="row">
                         <div class="col-12 col-sm-12 col-md-6">
                             <div class="form-group">
@@ -96,13 +96,15 @@
                             </div>
                         </div>
                         <div class="col-12">
-                            <a href="{{ url('laporankerja') }}" title="Kembali" class="btn btn-info">Kembali</a>
+                            @if(Auth::user()->role()->first()->name != 'pimpinan')<a href="{{ url('laporankerja') }}" title="Kembali" class="btn btn-info">Kembali</a>@else<a href="{{ url('reporting/working') }}" title="Kembali" class="btn btn-info">Kembali</a>@endif
+                            @if(Auth::user()->role()->first()->name != 'pimpinan')
                             <button type="button" title="Hapus" class="btn btn-danger" onclick="(confirm('Data Laporan Kerja Harian akan dihapus!\nLanjutkan?')) ? document.getElementById('deleteReport').submit() : ''">Hapus</button>
                             <a href="{{ url('laporankerja/' . $dailyWorkReport->daily_work_report_id . '/edit') }}" title="Ubah Data" class="btn btn-success">Edit</a>
-                            <a target="_blank" href="{{ url('laporankerja/' . $dailyWorkReport->daily_work_report_id . '/print') }}" title="Cetak Data" class="btn btn-primary">Cetak</a>
+                            @endif
+                            @if(Auth::user()->role()->first()->name != 'pimpinan')<a target="_blank" href="{{ url('laporankerja/' . $dailyWorkReport->daily_work_report_id . '/print') }}" title="Cetak Data" class="btn btn-primary">Cetak</a>@else<a target="_blank" href="{{ url('reporting/working/' . $dailyWorkReport->daily_work_report_id . '/print') }}" title="Cetak Data" class="btn btn-primary">Cetak</a>@endif
                         </div>
                     </div>
-                </form><form action="{{ url('laporankerja/' . $dailyWorkReport->daily_work_report_id) }}" method="post" id="deleteReport">@csrf @method('delete')</form>
+                @if(Auth::user()->role()->first()->name != 'pimpinan')</form><form action="{{ url('laporankerja/' . $dailyWorkReport->daily_work_report_id) }}" method="post" id="deleteReport">@csrf @method('delete')</form>@endif
             </div>
         </div>
     </div>

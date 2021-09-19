@@ -49,7 +49,7 @@
                                 <td>{{ $d->nip }}</td>
                                 <td>{{ $d->name }}</td>
                                 <td>{{ '2' }}</td>
-                                <td><a href="{{ url('/laporankerja/' . $d->daily_work_report_id) }}" class="btn btn-primary btn-sm">Detail</a></td>
+                                <td>@if(Auth::user()->role()->first()->name != 'pimpinan')<a href="{{ url('/laporankerja/' . $d->daily_work_report_id) }}" class="btn btn-primary btn-sm">Detail</a>@else <a href="{{ url('/reporting/working/' . $d->daily_work_report_id) }}" class="btn btn-primary btn-sm">Detail</a> @endif</td>
                             </tr>
                             @endforeach
                         </tbody>
